@@ -13,9 +13,9 @@ terdapat open port 80 (http/web). akses web dan register ke web.
 
 setelah register, kita login sebagai user. setelah berhasil login user akan mendapatkan cookie dari server agar dapat diautentikasi.
 
-kita terautentikasi sebagai user biasa di web. ganti cookie menjadi admin untuk memperoleh hak akses admin. cookie bisa dibuat dengan mengencode string "admin" ke base64. ganti cookie user dengan cookie admin. reload halaman dan kita akan terautentikasi sebagai admin.
+kita terautentikasi sebagai user biasa di web. ganti cookie menjadi admin untuk memperoleh hak akses admin. cookie bisa dibuat dengan mengencode string "admin" ke base64. ganti cookie user dengan cookie admin. Klik logout atau reload halaman dan kita akan terautentikasi sebagai admin.
 
-admin memiliki hak akses lebih dari user biasa. admin bisa melakukan upload produk di halaman /product. di halaman product terdapat flag pertama.
+admin memiliki hak akses lebih dari user biasa. admin bisa melakukan upload produk di halaman /product.php. di halaman product terdapat flag pertama.
 
 ### Foothold
 coba upload shell melalui fitur upload gambar produk. fitur upload akan membatasi upload gambar hanya dengan ekstensi tertentu.
@@ -36,7 +36,7 @@ modifikasi request dengan mengubah kembali ekstensi php reverse shell dari .png 
 
 akses shell yang sudah diupload. shell akan terupload di direktori /assets/img
 
-cek nc listener, kita mendapat shell sebagai user www-data
+cek nc listener, kita mendapat shell sebagai user www-data atau deamon
 
 ### Privilege Escalation ke User
 terdapat 2 cara untuk memperoleh privilege user :
@@ -45,11 +45,11 @@ terdapat 2 cara untuk memperoleh privilege user :
 
 untuk cara pertama kita bisa melakukan bruteforce ssh. pada tahap reconnaisance di awal diketaui bahwa terdapat port 22 (ssh) yang terbuka. berdasarkan hint yang diperoleh, kita dapat melakukan enumerasi user untuk mengetahui username dan kita bisa menggunakan wordlist rockyou sebagai password untuk melakukan bruteforce.
 
-enumerasi user dengan mengecek file /etc/passwd. terdapat user tk22eh.
+enumerasi user dengan mengecek file cat /etc/passwd. terdapat user tk22eh.
 
 lakukan bruteforce ssh dengan hydra
 
-untuk cara kedua kita bisa menggunakan password admin yang ada di database. kita bisa berasumsi bahwa user admin di web adalah user yang sama dengan user di server. enumerasi user di server dengan cara yang sama dengan cara pertama (/etc/passwd).
+untuk cara kedua kita bisa menggunakan password admin yang ada di database. kita bisa berasumsi bahwa user admin di web adalah user yang password-nya sama dengan user di server. enumerasi user di server dengan cara yang sama dengan cara pertama (cat /etc/passwd).
 
 login ke ssh dengan username (tk22eh) dan password ( - password di db - )
 
@@ -63,4 +63,4 @@ cek hak akses file tersebut dengan perintah ls -la. kita memiliki akses untuk me
 
 modifkasi isi file. ubah file tersebut menjadi reverse shell. isi file dengan payload reverse shell sehingga ketika cron job dieksekusi maka reverse shell akan tereksekusi.
 
-setup listener dengan nc. tungu hingga cron job tereksekusi dan kita mendapat shell sebagai root.
+setup listener dengan nc. tunggu hingga cron job tereksekusi dan kita mendapat shell sebagai root.
