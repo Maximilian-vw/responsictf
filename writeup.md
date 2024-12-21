@@ -11,16 +11,16 @@ Scan open port atau running service menggunakan nmap
 
 
 ### Initial Access
-terdapat open port 80 (http/web). akses web dan register ke web.
+Terdapat open port 80 (http/web). akses web dan register ke web.
 ![image](https://github.com/user-attachments/assets/259746c4-d1f3-46bb-9b32-adda384b6ffa)
 
 ![image](https://github.com/user-attachments/assets/4b112efc-3fa2-4c88-8893-99e6435491de)
 
 
-setelah register, kita login sebagai user. setelah berhasil login user akan mendapatkan cookie dari server agar dapat diautentikasi.
+Setelah register, login sebagai user. setelah berhasil login user akan mendapatkan cookie dari server agar dapat diautentikasi.
 ![image](https://github.com/user-attachments/assets/ce40c8ee-a282-45fc-9f1e-2c93bdda5f3f)
 
-kita terautentikasi sebagai user biasa di web. ganti cookie menjadi admin untuk memperoleh hak akses admin. cookie bisa dibuat dengan mengencode string "admin" ke base64. ganti cookie user dengan cookie admin. Klik logout atau reload halaman dan kita akan terautentikasi sebagai admin.
+Jika sudah terautentikasi sebagai user biasa di web. ganti cookie menjadi admin untuk memperoleh hak akses admin. cookie bisa dibuat dengan mengencode string "admin" ke base64. ganti cookie user dengan cookie admin. Klik logout atau reload halaman dan akan terautentikasi sebagai admin.
 ![image](https://github.com/user-attachments/assets/d3ca5114-1cc2-4080-9814-ecaaede02452)
 
 admin memiliki hak akses lebih dari user biasa. admin bisa melakukan upload produk di halaman /product.php. di halaman product terdapat flag pertama.
@@ -34,10 +34,10 @@ admin memiliki hak akses lebih dari user biasa. admin bisa melakukan upload prod
 coba upload shell melalui fitur upload gambar produk. fitur upload akan membatasi upload gambar hanya dengan ekstensi tertentu.
 ![Screenshot 2024-12-21 034713](https://github.com/user-attachments/assets/3d6b69be-f01d-4253-8cff-6192efe50223)
 
-jika halaman tersebut diinspect maka kita bisa melihat bahwa terdapat fiter untuk membatasi ekstensi file yang dapat di upload.
+jika halaman tersebut diinspect maka bisa melihat bahwa terdapat fiter untuk membatasi ekstensi file yang dapat di upload.
 ![image](https://github.com/user-attachments/assets/919df401-1a53-432f-a9e9-883d9ade2506)
 
-namun karena filter berada di frontend kita bisa melakukan bypass dengan cara intercept trafik menggunakan burp dan modifikasi request sebelum dikirim ke server.
+namun karena filter berada di frontend bisa dilakukan bypass dengan cara intercept trafik menggunakan burpsuite dan modifikasi request sebelum dikirim ke server.
 ![Screenshot 2024-12-21 035610](https://github.com/user-attachments/assets/eab9f46b-3a04-439f-ba2b-d90789a41478)
 
 buat php reverse shell, sesuaikan ip dan port dengan listener.
@@ -69,7 +69,7 @@ terdapat 2 cara untuk memperoleh privilege user :
 - terdapat hint di direktori web (hint.txt : enumerate user & rockyou)
 - terdapat file database di direktori web (backup.db)
 
-untuk cara pertama kita bisa melakukan bruteforce ssh. pada tahap reconnaisance di awal diketaui bahwa terdapat port 22 (ssh) yang terbuka. berdasarkan hint yang diperoleh, kita dapat melakukan enumerasi user untuk mengetahui username dan kita bisa menggunakan wordlist rockyou sebagai password untuk melakukan bruteforce.
+untuk cara pertama bisa melakukan bruteforce ssh. pada tahap reconnaisance di awal diketaui bahwa terdapat port 22 (ssh) yang terbuka. berdasarkan hint yang diperoleh, kita dapat melakukan enumerasi user untuk mengetahui username dan kita bisa menggunakan wordlist rockyou sebagai password untuk melakukan bruteforce.
 
 enumerasi user dengan mengecek file cat /etc/passwd. terdapat user tk22eh.
 ![image](https://github.com/user-attachments/assets/7ba5e784-a995-4326-8a78-e48594fd9bf8)
@@ -77,7 +77,7 @@ enumerasi user dengan mengecek file cat /etc/passwd. terdapat user tk22eh.
 lakukan bruteforce ssh dengan hydra
 ![image](https://github.com/user-attachments/assets/8eb21e72-6b48-436c-8523-387c76ed8f11)
 
-untuk cara kedua kita bisa menggunakan password admin yang ada di database. kita bisa berasumsi bahwa user admin di web adalah user yang password-nya sama dengan user di server. enumerasi user di server dengan cara yang sama dengan cara pertama (cat /etc/passwd).
+untuk cara kedua bisa menggunakan password admin yang ada di database. bisa diasumsikan bahwa user admin di web adalah user yang password-nya sama dengan user di server. enumerasi user di server dengan cara yang sama dengan cara pertama (cat /etc/passwd).
 ![image](https://github.com/user-attachments/assets/44327f3c-1451-4721-bf28-8236fa6b5f87)
 
 login ke ssh dengan username (tk22eh) dan password ( - password di db - )
@@ -88,13 +88,13 @@ login ke ssh dengan username (tk22eh) dan password ( - password di db - )
 terdapat cron job yang berjalan. cek cron job dengan perintah cat /etc/crontab.
 ![image](https://github.com/user-attachments/assets/a09d0c7d-2551-45e3-91d2-5b78d045fc55)
 
-berdasarkan crontab kita bisa mengetahui bahwa ada cron job yang berjalan. cron job menjalankan file .config/priv_esc.sh di direktori home user.
+berdasarkan crontab bisa diketahui bahwa ada cron job yang berjalan. cron job menjalankan file .config/priv_esc.sh di direktori home user.
 
-cek hak akses file tersebut dengan perintah ls -la. kita memiliki akses untuk memodifikasi file tersebut.
+cek hak akses file tersebut dengan perintah ls -la. user tk22eh memiliki akses untuk memodifikasi file tersebut.
 ![image](https://github.com/user-attachments/assets/a517ddb3-41d5-4cb6-8575-ff69b6c42f47)
 
 modifkasi isi file. ubah file tersebut menjadi reverse shell. isi file dengan payload reverse shell sehingga ketika cron job dieksekusi maka reverse shell akan tereksekusi.
 ![image](https://github.com/user-attachments/assets/5e8ac181-b0ee-4142-8066-4c35711f83b9)
 
-setup listener dengan nc. tunggu hingga cron job tereksekusi dan kita mendapat shell sebagai root.
+setup listener dengan nc. tunggu hingga cron job tereksekusi dan boom berhasil mendapat shell sebagai root.
 ![image](https://github.com/user-attachments/assets/a506e24f-e9b7-4d29-9cd3-4171b21709b4)
